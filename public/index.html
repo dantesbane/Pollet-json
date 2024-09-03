@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" 
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;transition-duration: 300ms;
+    font-family: "Open Sans", sans-serif;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+    min-height: 100vh;
+    background-color: black;
+    color: aliceblue;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 800px;
+}
+
+form h1 {
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: aliceblue;
+    text-shadow: 0 0 8px skyblue;
+    text-align: center;
+    user-select: none;
+    margin: 32px 0;
+}
+
+form >input,
+form label,
+form label input {
+    width: 100%;
+    background: transparent;
+    outline: none;
+    color: white;
+    padding: 6px 4px;
+    border: none;
+}
+
+
+form div {
+    display: flex;
+    flex-direction: column;
+    width: 100%; gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+form div div{
+    color: yellow;
+    cursor: pointer;
+    width: fit-content;
+    transition-duration: 300ms;
+}
+
+
+form div div:hover{
+    transform:scale(1.5);
+}
+
+form div input{
+    width:100%;
+    background: cyan;color: black;border: none;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin:18px auto;
+}
+
+form div input:hover{
+    background: transparent;
+    color: cyan;
+}
+
+
+
+.buttonhover{
+       color: yellow;
+    cursor: pointer;
+    width: fit-content;
+    transform: scale(1.5)
+}
+
+.buttonhover:hover{
+    transform:scale(2);
+}
+
+#question{
+    border: 1px solid transparent;
+    border-bottom: 1px solid cyan;margin: 4px 0 12px 0;
+    font-size: 1.2rem;padding: 14px 12px;
+}
+#question:focus{
+    border:1px solid aqua;
+}
+
+#question:hover{
+    opacity: 0.8;
+    }
+
+
+#options{
+    border:1px solid transparent;
+    border-bottom: 1px solid transparent;
+    padding :15px 0 5px 0;
+    flex: 1;
+}
+
+#options:hover {
+    border-bottom: 1px solid yellow;
+}
+
+form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+    </style></head>
+    <!-- form layout here -->
+
+<body>   
+    <form action="#" onsubmit="handlesubmit(this)">
+    <h1>Poll booth</h1>
+    <input type="text" required id="question" placeholder="Enter your question... "> 
+    <label>
+        <input type="text" required class="options" id="options" placeholder="Option 1">
+    </label>
+    <label>
+        <input type="text" required class="options" id="options" placeholder="Option 2">
+    </label>
+    <div id="buttons">
+        <div id="add"> <i class="fa-solid fa-plus"></i></div>
+        <input type="submit" value="POLL" id="submit"/>
+    </div></form>
+
+
+
+    <script>
+        const labels=document.querySelectorAll('form label')
+        labels.forEach((label)=>{ //add the atom element picture to each option
+            label.innerHTML='<i class="fa-solid fa-atom"></i>'+label.innerHTML
+        })
+
+        const addbtn=document.getElementById('add')  //getting the plus symbol as a button 
+        const form=document.querySelector('form')       //getting the form 
+        const btns=document.getElementById('buttons')   
+        function addoption(){     //setting up a fucntion to create new options, options are inside label tag so we can create a new 
+            const newnode=document.createElement('label')   // label tag and then insert our input tag as the innnerhtml of the tag
+            form.insertBefore(newnode,btns)         //we have to add the new option right before our buttons for it to be at the bottom 
+
+            document.querySelector('label:last-of-type').innerHTML='<i class="fa-solid fa-atom"></i>'+
+            '<input type="text" required class="options" id="options" placeholder="..."></input>'
+        }
+        addbtn.addEventListener('click',addoption)
+        const submitbtn=document.getElementById('submit')
+        
+        async function handlesubmit(e) {
+            const question=document.getElementById("question").value
+            const options=Array.from(document.querySelectorAll('.options')).map(option=>option.value)
+            
+
+
+            const idsres=await fetch('/ids')
+            const {ids}=await idsres.json()
+            const id=ids.length===0 ? 1: Math.max(...ids)+1 
+
+            console.log(options)
+            const res =await( fetch('/',{
+                method: 'POST',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                   id,
+                    question,
+                    options
+                })
+            }))
+
+    
+        }
+
+    </script>
+</body>
+</html>
